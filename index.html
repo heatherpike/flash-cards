@@ -2,24 +2,36 @@
 <html>
     <head>
         <title>Flash Cards</title>
-        <link rel="stylesheet" type="text/css" href="reset.css" />
-        <link rel="stylesheet" type="text/css" href="style.css" />
-        <script src="angular.js"></script>
-        <script src="app.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/reset.css" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <script src="js/lib/angular.js"></script>
+        <script src="js/app.js"></script>
+        <script src="js/controllers/MainController.js"></script>
+        <script src="js/controllers/FlashCardController.js"></script>
+        <script src="js/controllers/StatsController.js"></script>
+        <script src="js/factories/FlashCardFactory.js"></script>
+        <script src="js/factories/ScoreFactory.js"></script>
+        <script src="js/filters/cheat.js"></script>
     </head>
 
     <body>
 
         <div ng-app="FlashCards">
 
+            <div ng-controller="StatsController" id="statistics" ng-include="'templates/statistics.html'"></div>
+
             <div ng-controller="MainController">
+
+                <button class="category-button" ng-class="{active:currentCategory == category}" ng-repeat="category in categories" ng-click="getCategoryCards(category)">{{ category }}</button>
+                <button class="category-button" ng-click="getCategoryCards()">Reset</button>
 
                 <div ng-repeat="flashCard in flashCards | orderBy:'question'" ng-controller="FlashCardController" class="flash-card">
                     <h1>{{ flashCard.question | uppercase }}</h1>
+                    <h3>{{ flashCard.category }}</h3>
                     <ul class="flash-card-answers">
                         <li class="flash-card-answer"
                             ng-click="answerQuestion(answer)"
-                            ng-repeat="answer in flashCard.answers">
+                            ng-repeat="answer in flashCard.answers | cheat">
                             {{ answer.text }}
                         </li>
                     </ul>
