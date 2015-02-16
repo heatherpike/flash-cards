@@ -1,33 +1,14 @@
 var app = angular.module('FlashCards', []);
 
-app.controller('MainController', function ($scope) {
+app.controller('MainController', function ($scope, FlashCardsFactory) {
 
-    $scope.flashCards = [
-        {
-            question: 'What is Angular?',
-            answers: [
-                { text: 'A front-end framework for great power!', correct: true },
-                { text: 'Something lame, who cares, whatever.', correct: false },
-                { text: 'Some kind of fish, right?', correct: false }
-            ]
-        },
-        {
-            question: 'What is a controller?',
-            answers: [
-                { text: 'Something that manages my front-end routes', correct: false },
-                { text: 'A function that allows me to manage a scope', correct: true },
-                { text: 'An Angular template', correct: false }
-            ]
-        },
-        {
-            question: 'What does {{ }} do?',
-            answers: [
-                { text: 'It runs some Javascript', correct: false },
-                { text: 'It looks for variables in HTML', correct: false },
-                { text: 'It runs an Angular expression that accesses my $scope', correct: true }
-            ]
-        }
-    ];
+    console.log(FlashCardsFactory);
+
+    FlashCardsFactory.getFlashCards().then(function(data) {
+        $scope.flashCards = data;
+        console.log($scope.flashCards);
+    });
+    
 
 });
 
@@ -49,3 +30,27 @@ app.controller('FlashCardController', function ($scope) {
     };
 
 });
+
+app.factory('FlashCardsFactory', function ($http) {
+    return { 
+        getFlashCards: function () {
+            //this function initially returns a promise for a response from the get request
+            //then once the response is generate then it returns a promise for the data
+            //then we resolve that when we call this function in our controller (above)
+            //in the controller we also need a promise but instead of returning something we 
+            //set the property on the scope (otherwise it would just return another promise)
+            var promiseForData = $http.get('/cards').then(function(response) {
+                return response.data;
+            });
+            return promiseForData;
+        }
+    };
+});
+
+
+
+
+
+
+
+
